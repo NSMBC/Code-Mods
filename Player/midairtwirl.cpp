@@ -53,7 +53,7 @@ static void doMidairTwirl(Player* player) {
 	}
 
 	if (ts.twirlFrames < TwirlLength) {
-		if (ts.twirlFrames == TwirlLength/3)
+		if (ts.twirlFrames == SfxStart)
 			Sound::playSFX(TwirlSFX, &player->position);
 
 		ts.startRotationY += Math::cdeg(360/TwirlLength) * (player->direction ? -1 : 1);
