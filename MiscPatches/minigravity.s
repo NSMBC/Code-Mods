@@ -1,0 +1,14 @@
+@ Credit: MeroMero
+
+ncp_jump(0x02106514,10)
+	LDRSB	R1, [R1, #0xAC]
+	STMFD	SP!, {R1}
+	LDR		R1, =0x208B168
+	LDR		R1, [R1]
+	LDRB	R1, [R1, #2]
+	TST		R1, #2
+	ADDNE	PC, PC, #4
+	LDMFD	SP!, {R1}
+	B		0x2106518
+	LDMFD	SP!, {R1}
+	B		0x210658C

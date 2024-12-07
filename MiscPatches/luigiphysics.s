@@ -1,0 +1,34 @@
+@ Credit: MeroMero
+
+ncp_call(0x0215EAD4,54)
+	STMFD	SP!, {R2-R9, LR}
+	MOV		R0, R5, LSL R9
+	LDR		R2, =0x2085A50
+	LDRB	R2, [R2]
+	LDR		R3, =0x212E2D8
+	CMP		R2, #1
+	LDRNE	R4, =0x3A80
+	MOVNE	R5, #0x90
+	MOVNE	R6, #0xB0
+	MOVNE	R7, #0x80
+	MOVNE	R8, #0x60
+	MOVNE	R9, #0x180
+	LDREQ	R4, =0x4080
+	MOVEQ	R5, #0x60
+	MOVEQ	R6, #0x78
+	MOVEQ	R7, #0x54
+	MOVEQ	R8, #0x40
+	MOVEQ	R9, #0x100
+	STR		R4, [R3]
+	STR		R4, [R3, #0x40]
+	STR		R4, [R3, #0x80]
+	STR		R5, [R3, #0xE0]
+	STR		R5, [R3, #0x100]
+	STR		R6, [R3, #0xE4]
+	STR		R6, [R3, #0x104]
+	STR		R7, [R3, #0xE8]
+	STR		R7, [R3, #0x108]
+	STR		R8, [R3, #0xEC]
+	STR		R8, [R3, #0x10C]
+	STR		R9, [R3, #0xFC]
+	LDMFD	SP!, {R2-R9, PC}
