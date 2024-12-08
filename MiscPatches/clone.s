@@ -1,4 +1,5 @@
 @ Credit: MeroMero
+@ WARNING: This will break custom grabbable/throwable actors
 
 @Luigi can spawn clones too
 ncp_call(0x0215AEC4,54)
