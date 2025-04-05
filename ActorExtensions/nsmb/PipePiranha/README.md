@@ -1,4 +1,14 @@
-Add to `stageobjsettings_new.xml`
+# Pipe Piranha Extension
+
+Adds:
+- Variable scale
+- Variable health and invincibility
+- The option to move regardless of the player's proximity
+- Attack/wait length options
+- Move speed options
+
+
+Add the following to `[NSMBe root]/stageobjsettings_new.xml`
 ```xml
 <class id="23">
   <name>Pipe Piranha Plant (facing up)</name>
