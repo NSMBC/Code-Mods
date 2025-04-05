@@ -10,8 +10,8 @@
 #define MORE_HEALTH 	true
 #define TIMING_OPTIONS 	true
 
-#define ALLOW_CODE_PACK true 	// if true, we can (where possible) try to pack new code into areas renderered obsolete
-
+#define ALLOW_CODE_PACK false 	// if true, we can (where possible) try to pack new code into areas renderered obsolete
+								// if using, be sure to compile with -Os!!
 /**************************/
 // MEMBERS
 #if MORE_HEALTH
@@ -25,12 +25,16 @@ u8 fireballHits;
 enum class Speed : u8 {
 	Normal,
 	VerySlow,
+	MediumSlow,
 	Slow,
 	Fast,
-	VeryFast
+	MediumFast,
+	VeryFast,
+
+	Count
 };
 
-static constexpr fx32 SpeedMultiplier[5] = {1.0fx, 0.25fx, 0.5fx, 2.0fx, 4.0fx};
+static constexpr fx32 SpeedMultiplier[scast<u8>(Speed::Count)] = {1.0fx, 0.25fx, 0.375fx, 0.5fx, 2.0fx, 3.0fx, 4.0fx};
 #endif
 
 #if SCALABLE || TIMING_OPTIONS
