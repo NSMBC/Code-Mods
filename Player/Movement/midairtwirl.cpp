@@ -6,7 +6,7 @@
  * IllyCat
 *********************/
 
-#include "nsmb.hpp"
+#include <nsmb.hpp>
 
 #define DISABLE_SHOULDER_CAM_PAN false
 
@@ -46,7 +46,8 @@ static void doMidairTwirl(Player* player) {
 		}
 
 		ts.twirlCooldown = 0;
-		if (!player->actionFlag.wallSlide) player->subActionFlag.fixDirection = false;
+		if (!player->actionFlag.wallSlide) 
+			player->subActionFlag.fixDirection = false;
 		ts.bufferedTwirl = false;
 		ts.twirling = false;
 		return;
@@ -59,7 +60,8 @@ static void doMidairTwirl(Player* player) {
 		ts.startRotationY += Math::cdeg(360/TwirlLength) * (player->direction ? -1 : 1);
 		player->rotation.y = ts.startRotationY;
 
-		if (player->velocity.y < 0) player->velocity.y = 0;
+		if (player->velocity.y < 0) 
+			player->velocity.y = 0;
 
 		ts.twirlFrames++;
 		
@@ -68,7 +70,8 @@ static void doMidairTwirl(Player* player) {
 			ts.bufferedTwirl = true;
 		}
 		ts.twirlCooldown--;
-		if (ts.twirlCooldown == 0) ts.twirling = false;
+		if (ts.twirlCooldown == 0) 
+			ts.twirling = false;
 
 	} else {
 		player->subActionFlag.fixDirection = false;
@@ -100,7 +103,7 @@ static bool tryMidairTwirl(Player* player) {
 		ts.twirlFrames = 0;
 		ts.bufferedTwirl = false;
 		if (!player->physicsFlag.lowHitbox) // if not crouching set animation
-			player->setAnimation(0x6, true, Player::FrameMode::Restart, 0x1300, 0);
+			player->setAnimation(6, true, Player::FrameMode::Restart, 1.1875fx, 0);
 
 		doMidairTwirl(player);
 
@@ -116,8 +119,10 @@ static void customMovement(Player* player) {
 
 	TwirlState& ts = twirlState[player->playerID];
 
-	if (!ts.twirling) tryMidairTwirl(player);
-	else doMidairTwirl(player);
+	if (!ts.twirling) 
+		tryMidairTwirl(player);
+	else
+		doMidairTwirl(player);
 };
 
 #if DISABLE_SHOULDER_CAM_PAN
