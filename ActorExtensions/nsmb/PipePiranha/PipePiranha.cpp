@@ -27,17 +27,17 @@ static const SizeT piranhaLeftSize = PipePiranhaSize;
 /**************************/
 
 ncp_call(0x21427a8,32) // PipePiranha::onCreate
-static void piranhaInitAC(ActiveCollider* ppAC, PipePiranha* pp, const ActiveColliderInfo& acInfo, u8 layerID) {
+static void piranhaInitAC(ActiveCollider* ppAC, PipePiranha* pp, const AcConfig& acCfg, u8 layerID) {
 
 	PipePiranha::Settings settings = pp->getSettings();
 	
-	ppAC->init(pp,acInfo,layerID);
+	ppAC->init(pp,acCfg,layerID);
 	
 	#if MORE_HEALTH
 	pp->fireballHits = 0;
 
 	if (settings.invincible)
-		ppAC->hitbox.selfFlag |= CollisionFlag::DamageEntity;
+		ppAC->config.attack |= AcAttack::EntityAsWeapon;
 
 	#endif
 	
@@ -53,13 +53,13 @@ static void piranhaInitAC(ActiveCollider* ppAC, PipePiranha* pp, const ActiveCol
 }
 
 ncp_call(0x21427c8,32) // PipePiranha::onCreate
-static void piranhaInitStemAC(ActiveCollider* stemAC, PipePiranha* pp, const ActiveColliderInfo& acInfo, u8 layerID) {
+static void piranhaInitStemAC(ActiveCollider* stemAC, PipePiranha* pp, const AcConfig& acCfg, u8 layerID) {
 
-	stemAC->init(pp,acInfo,layerID);
+	stemAC->init(pp,acCfg,layerID);
 
 	#if MORE_HEALTH
 	if (pp->getSettings().invincible)
-		stemAC->hitbox.selfFlag |= CollisionFlag::DamageEntity;
+		stemAC->config.attack |= AcAttack::EntityAsWeapon;
 	#endif
 
 }
@@ -76,15 +76,15 @@ static void piranhaLeavePipeUpdate(PipePiranha* pp) {
 		fx32 curScale = Math::lerpFx(2.0fx,Fx32::cast(scale),n);
 		fx32 acScale = Math::lerpFx(8.0fx,8.0fx*scale,n);
 
-		pp->activeCollider.hitbox.rect = {0, acScale, acScale, acScale};
+		pp->activeCollider.config.rect = {0, acScale, acScale, acScale};
 		pp->scale.set(curScale);
 
 		if (pp->pipeDirection < 2) {
-			pp->stemCollider.hitbox.rect.y = acScale;
-			pp->stemCollider.hitbox.rect.halfHeight = acScale;
+			pp->stemCollider.config.rect.y = acScale;
+			pp->stemCollider.config.rect.halfHeight = acScale;
 		} else {
-			pp->stemCollider.hitbox.rect.x = acScale;
-			pp->stemCollider.hitbox.rect.halfWidth = acScale;
+			pp->stemCollider.config.rect.x = acScale;
+			pp->stemCollider.config.rect.halfWidth = acScale;
 		}
 	}
 
@@ -101,15 +101,15 @@ static void piranhaEnterPipeUpdate(PipePiranha* pp) {
 		fx32 curScale = Math::lerpFx(Fx32::cast(scale),2.0fx,n);
 		fx32 acScale = Math::lerpFx(8.0fx*scale,8.0fx,n);
 
-		pp->activeCollider.hitbox.rect = {0, acScale, acScale, acScale};
+		pp->activeCollider.config.rect = {0, acScale, acScale, acScale};
 		pp->scale.set(curScale);
 
 		if (pp->pipeDirection < 2) {
-			pp->stemCollider.hitbox.rect.y = acScale;
-			pp->stemCollider.hitbox.rect.halfHeight = acScale;
+			pp->stemCollider.config.rect.y = acScale;
+			pp->stemCollider.config.rect.halfHeight = acScale;
 		} else {
-			pp->stemCollider.hitbox.rect.x = acScale;
-			pp->stemCollider.hitbox.rect.halfWidth = acScale;
+			pp->stemCollider.config.rect.x = acScale;
+			pp->stemCollider.config.rect.halfWidth = acScale;
 		}
 
 	}
@@ -139,14 +139,11 @@ static void fireballHitHook(PipePiranha* pp) {
 		return;
 
 	pp->fireballHits++;
-	pp->userCooldown1 = DamageEffectlength;
-	// pp->cooldownA = PipePiranha::DamagedEffectLength;
+	pp->cooldownA = PipePiranha::DamagedEffectLength;
 
 	// TODO: where and why does this get reset?????
-	if ((pp->collisionSwitch & CollisionSwitch::NoFireball) != CollisionSwitch::None)
-		pp->collisionSwitch &= ~CollisionSwitch::NoFireball;
- 	// if (pp->properties & EntityProperties::NoFireball) != EntityProperties::None)
-	 	// pp->properties &= ~EntityProperties::NoFireball
+ 	if ((pp->properties & EntityProperties::NoFireball) != EntityProperties::None)
+	 	pp->properties &= ~EntityProperties::NoFireball;
 
 	if (pp->fireballHits >= pp->getSettings().health) {
 		rcast<void(*)(PipePiranha*)>(0x214239c)(pp); // original onFireballHit
@@ -157,7 +154,7 @@ static void fireballHitHook(PipePiranha* pp) {
 }
 
 ncp_over(0x2143aac,32) // PipePiranha::vtable
-static const auto onFireballHitVFunc = &fireballHitHook;
+static const auto onFireballHitVFunc = fireballHitHook;
 
 #if ALLOW_CODE_PACK
 // size: 24 bytes
@@ -169,7 +166,7 @@ static void entityHitHook(PipePiranha* pp) {
 }
 
 ncp_over(0x2143aa8,32) // PipePiranha::vtable
-static const auto onEntityHitVFunc = &entityHitHook;
+static const auto onEntityHitVFunc = entityHitHook;
 
 // leaves 148 free bytes at 0x2141fd8!!
 ncp_jump(0x2141fd4,32) // PipePiranha::spawnCoin
@@ -202,8 +199,7 @@ static void renderHook(Model* mdl, const VecFx32* scale) {
 
 	pp->applyFireballWiggle();
 
-	// if (pp->cooldownA == 0) {
-	if (pp->userCooldown1 == 0) {
+	if (pp->cooldownA == 0) {
 		mdl->render(scale);
 	} else {
 		NNS_G3dMdlSetMdlFogEnableFlagAll(mdl->data,TRUE);
@@ -264,7 +260,6 @@ NTR_USED static s16 getMoveTransitLength(PipePiranha* pp) {
 	if (speed != PipePiranha::Speed::Normal) {
 		ret = Fx32(Math::div(Fx32::cast(ret), speedMult)).whole();
 
-		// set velocity here cause fuck it why not
 		if (pp->pipeDirection < 2) { 							// vertical facing piranhas
 			fx32 velY = Math::mul(pp->velocity.y, speedMult);
 			pp->velocity.y = velY; 

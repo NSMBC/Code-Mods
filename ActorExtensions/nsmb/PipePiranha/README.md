@@ -8,7 +8,7 @@
 - Move speed options
 
 
-To use the new settings within NSMBe, put following in `[NSMBe root]/stageobjsettings_new.xml`
+To use the new settings within NSMBe, put the following in `[NSMBe root]/stageobjsettings_new.xml`
 ```xml
 <class id="23">
   <name>Pipe Piranha Plant (facing up)</name>
@@ -73,9 +73,13 @@ To use the new settings within NSMBe, put following in `[NSMBe root]/stageobjset
 
 ## Stats
 
+- **Class size increased by**: 4 bytes
+
 > [!NOTE]
 > Code size was measured after compiling with `-Os` (optimized for size) enabled.
 
 - **Size of code added:** 1332 bytes
 
 - **With** `ALLOW_CODE_PACK`: 1204 bytes
+
+- **PipePiranha class size increase:** 4 bytes
