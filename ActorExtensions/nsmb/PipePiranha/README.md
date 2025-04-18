@@ -81,5 +81,3 @@ To use the new settings within NSMBe, put the following in `[NSMBe root]/stageob
 - **Size of code added:** 1332 bytes
 
 - **With** `ALLOW_CODE_PACK`: 1204 bytes
-
-- **PipePiranha class size increase:** 4 bytes
